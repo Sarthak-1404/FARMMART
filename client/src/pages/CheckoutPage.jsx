@@ -20,6 +20,12 @@ const CheckoutPage = () => {
 
   const handleCashOnDelivery = async() => {
       try {
+          // Check if an address is selected before proceeding
+          if (!addressList.length || !addressList[selectAddress]?._id) {
+            toast.error("Please select or add an address to proceed")
+            return
+          }
+
           const response = await Axios({
             ...SummaryApi.CashOnDeliveryOrder,
             data : {
@@ -54,6 +60,12 @@ const CheckoutPage = () => {
 
   const handleOnlinePayment = async()=>{
     try {
+        // Check if an address is selected before proceeding
+        if (!addressList.length || !addressList[selectAddress]?._id) {
+          toast.error("Please select or add an address to proceed")
+          return
+        }
+        
         toast.loading("Loading...")
         const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY
         const stripePromise = await loadStripe(stripePublicKey)
@@ -87,7 +99,7 @@ const CheckoutPage = () => {
       <div className='container mx-auto p-4 flex flex-col lg:flex-row w-full gap-5 justify-between'>
         <div className='w-full'>
           {/***address***/}
-          <h3 className='text-lg font-semibold'>Choose your address</h3>
+          <h3 className='text-lg font-semibold'>Choose your address <span className='text-red-500'>*</span></h3>
           <div className='bg-white p-2 grid gap-4'>
             {
               addressList.map((address, index) => {
@@ -112,6 +124,7 @@ const CheckoutPage = () => {
             <div onClick={() => setOpenAddress(true)} className='h-16 bg-blue-50 border-2 border-dashed flex justify-center items-center cursor-pointer'>
               Add address
             </div>
+            <p className='text-xs text-gray-500'><span className='text-red-500'>*</span> Address selection is required to complete your order</p>
           </div>
 
 
