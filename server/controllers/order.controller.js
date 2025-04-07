@@ -82,6 +82,14 @@ export async function paymentController(request,response){
             }
         })
 
+        const getBaseUrl = () => {
+            if (process.env.NODE_ENV === 'production') {
+                return process.env.FRONTEND_URL_PROD;
+            } else {
+                return process.env.FRONTEND_URL_LOCAL || 'http://localhost:5173';
+            }
+        };
+
         const params = {
             submit_type : 'pay',
             mode : 'payment',
@@ -92,8 +100,8 @@ export async function paymentController(request,response){
                 addressId : addressId
             },
             line_items : line_items,
-            success_url : `${process.env.FRONTEND_URL}/success`,
-            cancel_url : `${process.env.FRONTEND_URL}/cancel`
+            success_url : `${getBaseUrl()}/success`,
+            cancel_url : `${getBaseUrl()}/cancel`
         }
 
         const session = await Stripe.checkout.sessions.create(params)
