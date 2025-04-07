@@ -5,6 +5,15 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
 
+// Load environment variables first
+dotenv.config();
+
+// Log environment variables for debugging
+console.log('Environment Variables:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('FRONTEND_URL_LOCAL:', process.env.FRONTEND_URL_LOCAL);
+console.log('FRONTEND_URL_PROD:', process.env.FRONTEND_URL_PROD);
+
 import connectDB from './config/connectDB.js';
 
 import userRouter from './route/user.route.js';
@@ -16,8 +25,6 @@ import cartRouter from './route/cart.route.js';
 import addressRouter from './route/address.route.js';
 import orderRouter from './route/order.route.js';
 import newsRouter from './route/news.route.js';
-
-dotenv.config();
 
 const app = express();
 

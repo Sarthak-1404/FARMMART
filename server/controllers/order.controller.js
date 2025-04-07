@@ -83,12 +83,30 @@ export async function paymentController(request,response){
         })
 
         const getBaseUrl = () => {
+            console.log('NODE_ENV:', process.env.NODE_ENV);
+            console.log('FRONTEND_URL_LOCAL:', process.env.FRONTEND_URL_LOCAL);
+            console.log('FRONTEND_URL_PROD:', process.env.FRONTEND_URL_PROD);
+            
+            const localUrl = process.env.FRONTEND_URL_LOCAL || 'http://localhost:5173';
+            const prodUrl = process.env.FRONTEND_URL_PROD || 'https://farmmart-nxjk.vercel.app';
+            
             if (process.env.NODE_ENV === 'production') {
-                return process.env.FRONTEND_URL_PROD;
+                if (!prodUrl) {
+                    console.error('Production URL is not set, falling back to local URL');
+                    return localUrl;
+                }
+                return prodUrl;
             } else {
-                return process.env.FRONTEND_URL_LOCAL || 'http://localhost:5173';
+                if (!localUrl) {
+                    console.error('Local URL is not set, using default localhost URL');
+                    return 'http://localhost:5173';
+                }
+                return localUrl;
             }
         };
+
+        const baseUrl = getBaseUrl();
+        console.log('Using base URL:', baseUrl);
 
         const params = {
             submit_type : 'pay',
@@ -100,8 +118,8 @@ export async function paymentController(request,response){
                 addressId : addressId
             },
             line_items : line_items,
-            success_url : `${getBaseUrl()}/success`,
-            cancel_url : `${getBaseUrl()}/cancel`
+            success_url : `${baseUrl}/success`,
+            cancel_url : `${baseUrl}/cancel`
         }
 
         const session = await Stripe.checkout.sessions.create(params)
