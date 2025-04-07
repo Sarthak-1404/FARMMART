@@ -108,6 +108,13 @@ export async function paymentController(request,response){
         const baseUrl = getBaseUrl();
         console.log('Using base URL:', baseUrl);
 
+        // Ensure the URLs are absolute
+        const successUrl = new URL('/success', baseUrl).toString();
+        const cancelUrl = new URL('/cancel', baseUrl).toString();
+        
+        console.log('Success URL:', successUrl);
+        console.log('Cancel URL:', cancelUrl);
+
         const params = {
             submit_type : 'pay',
             mode : 'payment',
@@ -118,8 +125,8 @@ export async function paymentController(request,response){
                 addressId : addressId
             },
             line_items : line_items,
-            success_url : `${baseUrl}/success`,
-            cancel_url : `${baseUrl}/cancel`
+            success_url : successUrl,
+            cancel_url : cancelUrl
         }
 
         const session = await Stripe.checkout.sessions.create(params)

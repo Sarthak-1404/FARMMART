@@ -81,8 +81,18 @@ const CheckoutPage = () => {
         })
 
         const { data : responseData } = response
-
-        stripePromise.redirectToCheckout({ sessionId : responseData.id })
+        
+        // Clear the loading toast
+        toast.dismiss()
+        
+        // Redirect to Stripe checkout
+        const result = await stripePromise.redirectToCheckout({ 
+          sessionId: responseData.id 
+        })
+        
+        if (result.error) {
+          toast.error(result.error.message)
+        }
         
         if(fetchCartItem){
           fetchCartItem()
@@ -91,6 +101,7 @@ const CheckoutPage = () => {
           fetchOrder()
         }
     } catch (error) {
+        toast.dismiss()
         AxiosToastError(error)
     }
   }
